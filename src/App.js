@@ -15,7 +15,7 @@ const StyledWrapper = styled.div`
 const StyledCardContainer = styled.div`
   width: 200px;
   height: 300px;
-  perspective: 1000px;
+  perspective: 500px;
 `;
 
 const StyledCard = styled.div`
@@ -23,24 +23,42 @@ const StyledCard = styled.div`
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
-  transition: transform 1s;
   background: rgb(${colors.white});
   transition: ${transitions.long};
-  transform: rotateX(${({ invert }) => invert ? '180deg' : 0});
+`;
+
+const StyledCardTop = styled(StyledCard)`
+  height: 50%;
+  overflow: hidden;
+  transform: rotateX(${({ invert }) => invert ? '-180deg' : 0});
+  transform-origin: bottom;
+  & > div {
+    background: red;
+  }
+`;
+
+const StyledCardBottom = styled(StyledCard)`
+  height: 50%;
+  overflow: hidden;
+  bottom: 0;
+  z-index: -1;
+  & > div {
+    background: blue;
+    top: -100%;
+  }
 `;
 
 const StyledCardContent = styled.div`
   width: 100%;
-  height: 100%;
+  height: 200%;
   position: absolute;
-  font-size: 140px;
+  font-size: 160px;
   color: rgb(${colors.dark});
   backface-visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: rotateX(${({ invert }) => invert ? '180deg' : 0});
-
+  transform: rotateX(${({ invert }) => invert ? '-180deg' : 0});
 `;
 
 const StyledCardFront = styled(StyledCardContent)`
@@ -48,7 +66,8 @@ const StyledCardFront = styled(StyledCardContent)`
 `;
 
 const StyledCardBack = styled(StyledCardContent)`
-  transform: rotateX(180deg);
+  transition: ${transitions.long};
+  transform: rotateX(${({ invert }) => invert ? 0 : '-180deg'});
 `;
 
 class App extends Component {
@@ -58,11 +77,17 @@ class App extends Component {
   render() {
     return (
       <StyledWrapper>
-        <StyledCardContainer>
-          <StyledCard invert={this.state.invert} onClick={() => this.setState({ invert: !this.state.invert })}>
+        <StyledCardContainer onClick={() => this.setState({ invert: !this.state.invert })}>
+          <StyledCardTop>
+            <StyledCardFront>2</StyledCardFront>
+          </StyledCardTop>
+          <StyledCardTop invert={this.state.invert}>
             <StyledCardFront>1</StyledCardFront>
-            <StyledCardBack>2</StyledCardBack>
-          </StyledCard>
+            <StyledCardBack invert={this.state.invert}>2</StyledCardBack>
+          </StyledCardTop>
+          <StyledCardBottom invert={this.state.invert}>
+            <StyledCardFront>1</StyledCardFront>
+          </StyledCardBottom>
         </StyledCardContainer>
       </StyledWrapper>
     );
