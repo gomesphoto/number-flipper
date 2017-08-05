@@ -30,20 +30,22 @@ const StyledCard = styled.div`
 const StyledCardTop = styled(StyledCard)`
   height: 50%;
   overflow: hidden;
+  border-radius: 10px 10px 0 0;
   transform: rotateX(${({ invert }) => invert ? '-180deg' : 0});
   transform-origin: bottom;
   & > div {
-    background: red;
+    background: white;
   }
 `;
 
 const StyledCardBottom = styled(StyledCard)`
   height: 50%;
   overflow: hidden;
+  border-radius: 0 0 10px 10px;
+  border-top: 2px solid black;
   bottom: 0;
-  z-index: -1;
   & > div {
-    background: blue;
+    background: white;
     top: -100%;
   }
 `;
@@ -55,6 +57,7 @@ const StyledCardContent = styled.div`
   font-size: 160px;
   color: rgb(${colors.dark});
   backface-visibility: hidden;
+  transform-style: preserve-3d;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,7 +70,7 @@ const StyledCardFront = styled(StyledCardContent)`
 
 const StyledCardBack = styled(StyledCardContent)`
   transition: ${transitions.long};
-  transform: rotateX(${({ invert }) => invert ? 0 : '-180deg'});
+  transform: rotateX(${({ invert }) => invert ? 0 : '180deg'});
 `;
 
 class App extends Component {
@@ -83,10 +86,10 @@ class App extends Component {
           </StyledCardTop>
           <StyledCardTop invert={this.state.invert}>
             <StyledCardFront>1</StyledCardFront>
-            <StyledCardBack invert={this.state.invert}>2</StyledCardBack>
           </StyledCardTop>
           <StyledCardBottom invert={this.state.invert}>
             <StyledCardFront>1</StyledCardFront>
+            <StyledCardBack invert={this.state.invert}>2</StyledCardBack>
           </StyledCardBottom>
         </StyledCardContainer>
       </StyledWrapper>
