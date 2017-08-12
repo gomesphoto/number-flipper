@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
-import { colors, transitions } from './styles';
+import { colors } from './styles';
 
-const flip = keyframes`
-  0% { transform: rotateX(0); }
-  100% { transform: rotateX(-180deg); }
-`;
-
-const invert = keyframes`
-  0% { transform: rotateX(180deg); }
-  100% { transform: rotateX(0); }
+const StyledWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(${colors.dark});
 `;
 
 const StyledCardContainer = styled.div`
@@ -25,15 +25,14 @@ const StyledCard = styled.div`
   position: absolute;
   transform-style: preserve-3d;
   background: rgb(${colors.white});
-  transition: ${transitions.long};
+  transition: ${({ invert, interval }) => invert ? `all ${interval}ms ease-in-out` : 'none'};
 `;
 
 const StyledCardTop = styled(StyledCard)`
   height: 50%;
   overflow: hidden;
-  z-index: 2;
   border-radius: 10px 10px 0 0;
-  animation: ${flip} 0.7s ease-in-out;
+  transform: rotateX(${({ invert }) => invert ? '-180deg' : 0});
   transform-origin: bottom;
   & > div {
     background: white;
@@ -60,10 +59,10 @@ const StyledCardContent = styled.div`
   color: rgb(${colors.dark});
   backface-visibility: hidden;
   transform-style: preserve-3d;
-  animation: ${flip} 0.7s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: rotateX(${({ invert }) => invert ? '-180deg' : 0});
 `;
 
 const StyledCardFront = styled(StyledCardContent)`
@@ -71,44 +70,70 @@ const StyledCardFront = styled(StyledCardContent)`
 `;
 
 const StyledCardBack = styled(StyledCardContent)`
-  transition: ${transitions.long};
-  animation: ${invert} 0.7s ease-in-out;
+  transition: ${({ invert, interval }) => invert ? `all ${interval}ms ease-in-out` : 'none'};
+  transform: rotateX(${({ invert }) => invert ? 0 : '180deg'});
 `;
 
 let interval;
 
 class Card extends Component {
   state = {
-    current: 1
-  }
-  increment = () => {
-    if (this.state.current >= this.props.target)
-      return clearInterval(interval);
-    this.setState({ current: this.state.current + 1 });
+    invert: false,
+    next: 1,
+    current: 0,
+    interval: this.props.interval
   }
   componentDidMount() {
-    interval = setInterval(this.increment, 700);
+    interval = setInterval(this.animate, this.state.interval + 100);
+  }
+  animate = () => {
+    if (this.state.current >= this.props.target) return clearInterval(interval);
+    this.setState({ invert: !this.state.invert });
+    setTimeout(() => this.setState({
+      invert: !this.state.invert,
+      current: this.state.next,
+      next: this.state.next + 1
+    }), this.state.interval);
   }
   render() {
     return (
-      <StyledCardContainer {...this.props}>
-        <StyledCardTop>
-          <StyledCardFront>{this.state.current}</StyledCardFront>
-        </StyledCardTop>
-        <StyledCardTop>
-          <StyledCardFront>{this.state.current - 1}</StyledCardFront>
-        </StyledCardTop>
-        <StyledCardBottom>
-          <StyledCardFront>{this.state.current - 1}</StyledCardFront>
-          <StyledCardBack>{this.state.current}</StyledCardBack>
-        </StyledCardBottom>
-      </StyledCardContainer>
+      <StyledWrapper>
+        <StyledCardContainer onClick={this.animate}>
+          <StyledCardTop>
+            <StyledCardFront>{this.state.next}</StyledCardFront>
+          </StyledCardTop>
+          <StyledCardTop
+            interval={this.state.interval}
+            invert={this.state.invert}
+          >
+            <StyledCardFront>{this.state.current}</StyledCardFront>
+          </StyledCardTop>
+          <StyledCardBottom
+            interval={this.state.interval}
+            invert={this.state.invert}
+          >
+            <StyledCardFront>{this.state.current}</StyledCardFront>
+            <StyledCardBack
+              interval={this.state.interval}
+              invert={this.state.invert}
+            >
+              {this.state.next}
+            </StyledCardBack>
+          </StyledCardBottom>
+        </StyledCardContainer>
+      </StyledWrapper>
     );
   }
 }
 
 Card.propTypes = {
-  target: PropTypes.number.isRequired
+  interval: PropTypes.number,
+  target: PropTypes.number
+};
+
+Card.defaultProps = {
+  interval: 500,
+  target: 10
 }
 
 export default Card;
