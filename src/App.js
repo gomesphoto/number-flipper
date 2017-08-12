@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Card from './Card';
+import FlipperBoard from './FlipperBoard';
+
 import { colors } from './styles';
 
 const StyledWrapper = styled.div`
@@ -20,7 +21,7 @@ class App extends Component {
   render() {
     return (
       <StyledWrapper>
-        <Card target={this.state.target} />
+        <FlipperBoard target={this.state.target} />
       </StyledWrapper>
     );
   }

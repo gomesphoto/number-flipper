@@ -3,16 +3,6 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { colors } from './styles';
 
-const StyledWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgb(${colors.dark});
-`;
-
 const StyledCardContainer = styled.div`
   width: 200px;
   height: 300px;
@@ -75,19 +65,21 @@ const StyledCardBack = styled(StyledCardContent)`
 `;
 
 let interval;
+let target;
 
 class Card extends Component {
   state = {
     invert: false,
     next: 1,
     current: 0,
-    interval: this.props.interval
+    interval: this.props.interval + Math.random() * 100
   }
   componentDidMount() {
+    target = this.props.number === 0 ? 10 : this.props.number;
     interval = setInterval(this.animate, this.state.interval + 100);
   }
   animate = () => {
-    if (this.state.current >= this.props.target) return clearInterval(interval);
+    if (this.state.current >= target) return clearInterval(interval);
     this.setState({ invert: !this.state.invert });
     setTimeout(() => this.setState({
       invert: !this.state.invert,
@@ -97,43 +89,41 @@ class Card extends Component {
   }
   render() {
     return (
-      <StyledWrapper>
-        <StyledCardContainer onClick={this.animate}>
-          <StyledCardTop>
-            <StyledCardFront>{this.state.next}</StyledCardFront>
-          </StyledCardTop>
-          <StyledCardTop
+      <StyledCardContainer>
+        <StyledCardTop>
+          <StyledCardFront>{this.state.next}</StyledCardFront>
+        </StyledCardTop>
+        <StyledCardTop
+          interval={this.state.interval}
+          invert={this.state.invert}
+        >
+          <StyledCardFront>{this.state.current}</StyledCardFront>
+        </StyledCardTop>
+        <StyledCardBottom
+          interval={this.state.interval}
+          invert={this.state.invert}
+        >
+          <StyledCardFront>{this.state.current}</StyledCardFront>
+          <StyledCardBack
             interval={this.state.interval}
             invert={this.state.invert}
           >
-            <StyledCardFront>{this.state.current}</StyledCardFront>
-          </StyledCardTop>
-          <StyledCardBottom
-            interval={this.state.interval}
-            invert={this.state.invert}
-          >
-            <StyledCardFront>{this.state.current}</StyledCardFront>
-            <StyledCardBack
-              interval={this.state.interval}
-              invert={this.state.invert}
-            >
-              {this.state.next}
-            </StyledCardBack>
-          </StyledCardBottom>
-        </StyledCardContainer>
-      </StyledWrapper>
+            {this.state.next}
+          </StyledCardBack>
+        </StyledCardBottom>
+      </StyledCardContainer>
     );
   }
 }
 
 Card.propTypes = {
   interval: PropTypes.number,
-  target: PropTypes.number
+  number: PropTypes.number
 };
 
 Card.defaultProps = {
-  interval: 500,
-  target: 10
+  interval: 300,
+  number: 10
 }
 
 export default Card;
