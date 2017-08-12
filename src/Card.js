@@ -33,7 +33,7 @@ const StyledCardTop = styled(StyledCard)`
   overflow: hidden;
   z-index: 2;
   border-radius: 10px 10px 0 0;
-  animation: ${flip} 0.5s ease-in-out;
+  animation: ${flip} 0.7s ease-in-out;
   transform-origin: bottom;
   & > div {
     background: white;
@@ -60,10 +60,10 @@ const StyledCardContent = styled.div`
   color: rgb(${colors.dark});
   backface-visibility: hidden;
   transform-style: preserve-3d;
+  animation: ${flip} 0.7s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: ${flip} 0.5s ease-in-out;
 `;
 
 const StyledCardFront = styled(StyledCardContent)`
@@ -72,7 +72,7 @@ const StyledCardFront = styled(StyledCardContent)`
 
 const StyledCardBack = styled(StyledCardContent)`
   transition: ${transitions.long};
-  animation: ${invert} 0.5s ease-in-out;
+  animation: ${invert} 0.7s ease-in-out;
 `;
 
 let interval;
@@ -82,16 +82,16 @@ class Card extends Component {
     current: 1
   }
   increment = () => {
-    if (this.state.current >= this.props.target) return clearInterval(interval);
+    if (this.state.current >= this.props.target)
+      return clearInterval(interval);
     this.setState({ current: this.state.current + 1 });
   }
   componentDidMount() {
     interval = setInterval(this.increment, 700);
   }
   render() {
-    const { ...otherProps } = this.props;
     return (
-      <StyledCardContainer {...otherProps}>
+      <StyledCardContainer {...this.props}>
         <StyledCardTop>
           <StyledCardFront>{this.state.current}</StyledCardFront>
         </StyledCardTop>
