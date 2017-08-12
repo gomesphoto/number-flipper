@@ -15,12 +15,12 @@ const StyledWrapper = styled.div`
 
 class App extends Component {
   state = {
-    invert: false
+    target: 10
   }
   render() {
     return (
       <StyledWrapper>
-        <Card />
+        <Card target={this.state.target} />
       </StyledWrapper>
     );
   }
